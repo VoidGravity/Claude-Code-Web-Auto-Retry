@@ -1,6 +1,7 @@
 # Claude Code Web Auto-Retry
 
 [![Chrome / Edge](https://img.shields.io/badge/Chrome%20%2F%20Edge-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white)](https://github.com/VoidGravity/Claude-Code-Web-Auto-Retry)
+[![CI](https://github.com/VoidGravity/Claude-Code-Web-Auto-Retry/actions/workflows/ci.yml/badge.svg)](https://github.com/VoidGravity/Claude-Code-Web-Auto-Retry/actions/workflows/ci.yml)
 [![No telemetry](https://img.shields.io/badge/privacy-no%20telemetry-2ea44f)](SECURITY.md)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/VoidGravity/Claude-Code-Web-Auto-Retry?style=social)](https://github.com/VoidGravity/Claude-Code-Web-Auto-Retry/stargazers)
