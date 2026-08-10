@@ -1,0 +1,18 @@
+# Changelog
+
+All notable changes to Claude Code Web Auto-Retry will be documented here.
+
+## 1.0.0 - 2026-08-10
+
+### Added
+
+- Claude Code Web usage-limit detection.
+- Parsing for 12-hour, 24-hour, and relative reset times.
+- Browser-alarm scheduling at reset time plus a configurable buffer.
+- Automatic **Try again** interaction and post-click verification.
+- Configurable retry interval and maximum attempts.
+- Recovery for Chrome-discarded Claude tabs.
+- Independent schedules for multiple Claude tabs.
+- Popup controls for settings, manual retry, and clearing schedules.
+- Parser tests.
+- No-telemetry security and privacy policy.
