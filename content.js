@@ -4,7 +4,7 @@
   if (window.__claudeCodeWebAutoRetryLoaded) return;
   window.__claudeCodeWebAutoRetryLoaded = true;
 
-  const { hasUsageLimitText, parseResetTime, normalizeText } = globalThis.CUAR;
+  const { hasUsageLimitText, findNearestResetTime, normalizeText } = globalThis.CUAR;
   let lastFingerprint = null;
   let scanTimer = null;
 
@@ -28,33 +28,38 @@
     return normalizeText(main?.innerText || '');
   }
 
-  function findUsageLimitContainer() {
-    const nodes = [
-      ...document.querySelectorAll('[role="alert"], [role="status"], section, article, div')
-    ];
-
-    let best = null;
-    for (const node of nodes) {
-      if (!visible(node)) continue;
-      const text = normalizeText(node.innerText || node.textContent || '');
-      if (!hasUsageLimitText(text)) continue;
-      if (!best || text.length < best.text.length) best = { node, text };
-    }
-    return best;
+  function elementLabel(el) {
+    return normalizeText(
+      el?.innerText ||
+      el?.textContent ||
+      el?.getAttribute?.('aria-label') ||
+      el?.getAttribute?.('title') ||
+      ''
+    ).toLowerCase();
   }
 
-  function findTryAgainButton(container) {
-    const roots = container ? [container, document] : [document];
-    for (const root of roots) {
-      const buttons = [...root.querySelectorAll('button, [role="button"]')];
-      const exact = buttons.find((el) => {
-        if (!visible(el) || !enabled(el)) return false;
-        const text = normalizeText(
-          el.innerText || el.textContent || el.getAttribute('aria-label') || ''
-        ).toLowerCase();
-        return text === 'try again' || text === 'retry';
-      });
-      if (exact) return exact;
+  function isTryAgainButton(el) {
+    if (!visible(el) || !enabled(el)) return false;
+    const text = elementLabel(el);
+    return text === 'try again' || text === 'retry';
+  }
+
+  function findUsageLimitAncestor(button) {
+    let node = button;
+    for (let depth = 0; node && depth < 7; depth += 1, node = node.parentElement) {
+      const text = normalizeText(node.innerText || node.textContent || '');
+      if (!text || text.length > 3000) continue;
+      if (hasUsageLimitText(text)) return node;
+    }
+    return null;
+  }
+
+  function findActiveUsageLimitAction() {
+    const buttons = [...document.querySelectorAll('button, [role="button"]')];
+    for (const button of buttons) {
+      if (!isTryAgainButton(button)) continue;
+      const container = findUsageLimitAncestor(button);
+      if (container) return { button, container };
     }
     return null;
   }
@@ -240,18 +245,17 @@
   }
 
   function detectState() {
-    const match = findUsageLimitContainer();
+    const activeLimit = findActiveUsageLimitAction();
+    const limited = Boolean(activeLimit);
     const fullText = pageText();
-    const limited = hasUsageLimitText(fullText);
-    const resetAt = limited ? parseResetTime(fullText) : null;
-    const button = limited ? findTryAgainButton(match?.node) : null;
+    const resetInfo = limited ? findNearestResetTime(fullText) : null;
     const composer = findComposer();
 
     return {
       limited,
-      resetAt,
-      resetText: resetAt ? fullText.match(/resets?[^.\n]*/i)?.[0] || null : null,
-      hasTryAgain: Boolean(button),
+      resetAt: resetInfo?.timestamp || null,
+      resetText: resetInfo?.text || null,
+      hasTryAgain: Boolean(activeLimit?.button),
       hasContinueDraft: isContinueDraft(composer)
     };
   }
@@ -299,6 +303,13 @@
       return;
     }
 
+    if (message?.type === 'resetUsageDetection') {
+      lastFingerprint = null;
+      setTimeout(() => reportState(true), 0);
+      sendResponse({ ok: true });
+      return;
+    }
+
     if (message?.type === 'attemptUsageRetry') {
       (async () => {
         const before = detectState();
@@ -317,8 +328,8 @@
           return;
         }
 
-        const match = findUsageLimitContainer();
-        const button = findTryAgainButton(match?.node);
+        const activeLimit = findActiveUsageLimitAction();
+        const button = activeLimit?.button || null;
         let clicked = false;
 
         if (button) {
@@ -335,7 +346,7 @@
             clicked: false,
             submitted: false,
             limited: true,
-            reason: button ? 'send-control-not-found' : 'button-not-found'
+            reason: 'button-not-found'
           });
           return;
         }
