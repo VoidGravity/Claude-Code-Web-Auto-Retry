@@ -218,8 +218,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         ? resetAt + settings.bufferSeconds * 1000
         : Date.now() + fallbackDelay;
 
-      const nextAttemptAt = existing?.nextAttemptAt && existing.nextAttemptAt <= target
-        ? existing.nextAttemptAt
+      const sameResetCycle = Boolean(
+        existing &&
+        resetAt != null &&
+        existing.resetAt === resetAt
+      );
+
+      const existingFutureAttempt = Number(existing?.nextAttemptAt) > Date.now()
+        ? Number(existing.nextAttemptAt)
+        : null;
+
+      const nextAttemptAt = sameResetCycle && existingFutureAttempt && existingFutureAttempt <= target
+        ? existingFutureAttempt
         : target;
 
       await upsertSchedule(tabId, {
@@ -229,9 +239,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         resetText: message.resetText || null,
         hasTryAgain: Boolean(message.hasTryAgain),
         status: 'waiting',
-        attempts: existing?.resetAt === resetAt ? (existing.attempts || 0) : 0,
+        attempts: sameResetCycle ? (existing.attempts || 0) : 0,
         nextAttemptAt,
-        lastReason: resetAt ? 'usage-limit-detected' : 'reset-time-unknown'
+        lastReason: resetAt ? (sameResetCycle ? 'usage-limit-detected' : 'new-reset-cycle') : 'reset-time-unknown'
       });
       await scheduleAlarm(tabId, nextAttemptAt);
       return;
