@@ -166,7 +166,8 @@ async function attemptRetry(tabId, manual = false) {
     return;
   }
 
-  await new Promise((resolve) => setTimeout(resolve, result?.clicked ? 8000 : 1500));
+  const actionTaken = Boolean(result?.clicked || result?.submitted);
+  await new Promise((resolve) => setTimeout(resolve, actionTaken ? 8000 : 1500));
 
   let state = null;
   try {
