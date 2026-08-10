@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Claude Code Web Auto-Retry</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Claude Code Auto-Retry</h1>
+        <p>Wait for usage reset, then retry.</p>
+      </div>
+      <label class="switch" title="Enable auto-retry">
+        <input id="enabled" type="checkbox" />
+        <span></span>
+      </label>
+    </header>
+
+    <section class="settings">
+      <label>Reset buffer <input id="bufferSeconds" type="number" min="0" max="600" step="5" /> <small>sec</small></label>
+      <label>Retry every <input id="retryIntervalSeconds" type="number" min="30" max="3600" step="10" /> <small>sec</small></label>
+      <label>Max attempts <input id="maxAttempts" type="number" min="1" max="100" step="1" /></label>
+      <label class="check"><input id="reloadDiscardedTabs" type="checkbox" /> Reload discarded tabs at reset</label>
+    </section>
+
+    <section>
+      <div class="section-title">Scheduled sessions</div>
+      <div id="sessions" class="sessions"><div class="empty">No usage-limited sessions detected.</div></div>
+    </section>
+
+    <footer id="status">Ready.</footer>
+  </main>
+  <script src="shared.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
