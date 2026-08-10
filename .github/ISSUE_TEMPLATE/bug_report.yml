@@ -1,0 +1,62 @@
+name: Bug report
+description: Report a Claude Code Web auto-retry or UI-detection problem
+title: "[Bug]: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please remove private Claude conversation content from screenshots/logs.
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: "Chrome 151 / Edge 151"
+    validations:
+      required: true
+
+  - type: input
+    id: extension
+    attributes:
+      label: Extension version or commit
+      placeholder: "1.0.0 or commit SHA"
+    validations:
+      required: true
+
+  - type: textarea
+    id: limit-text
+    attributes:
+      label: Visible usage-limit and reset text
+      description: Copy the exact text Claude shows, if possible.
+      placeholder: |
+        Usage limit reached
+        Resets at 4:10 AM
+    validations:
+      required: true
+
+  - type: dropdown
+    id: try-again
+    attributes:
+      label: Was the Try again button visible?
+      options:
+        - "Yes"
+        - "No"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: Describe what happened and what you expected.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant console errors
+      description: Optional. Do not paste private conversation content.
+      render: text
