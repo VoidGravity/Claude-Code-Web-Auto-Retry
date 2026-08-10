@@ -1,0 +1,29 @@
+:root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; width: 390px; background: #171717; color: #f5f5f5; }
+main { padding: 16px; }
+header { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+h1 { font-size: 15px; margin: 0 0 4px; }
+p { font-size: 12px; color: #a3a3a3; margin: 0; }
+.settings { margin: 16px 0; display: grid; gap: 8px; padding: 12px; border: 1px solid #343434; border-radius: 10px; background: #202020; }
+.settings label { display: grid; grid-template-columns: 1fr 72px 28px; gap: 6px; align-items: center; font-size: 12px; color: #d4d4d4; }
+.settings label.check { grid-template-columns: 18px 1fr; }
+input[type="number"] { width: 72px; background: #111; color: #fff; border: 1px solid #404040; border-radius: 6px; padding: 6px; }
+small { color: #737373; }
+.section-title { font-size: 11px; font-weight: 700; color: #a3a3a3; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+.sessions { display: grid; gap: 8px; }
+.session { border: 1px solid #343434; border-radius: 10px; padding: 10px; background: #202020; }
+.session-title { font-size: 12px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.meta { margin-top: 5px; color: #a3a3a3; font-size: 11px; line-height: 1.45; }
+.actions { display: flex; gap: 6px; margin-top: 9px; }
+button { border: 1px solid #404040; border-radius: 6px; background: #2a2a2a; color: #f5f5f5; padding: 5px 8px; cursor: pointer; font-size: 11px; }
+button:hover { background: #333; }
+button:disabled { opacity: .55; cursor: default; }
+.empty { color: #737373; font-size: 12px; padding: 10px 0; }
+footer { margin-top: 12px; color: #737373; font-size: 10px; }
+.switch { position: relative; width: 38px; height: 22px; flex: 0 0 auto; }
+.switch input { display: none; }
+.switch span { position: absolute; inset: 0; background: #444; border-radius: 999px; cursor: pointer; transition: .15s; }
+.switch span::after { content: ""; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; border-radius: 50%; background: white; transition: .15s; }
+.switch input:checked + span { background: #d97706; }
+.switch input:checked + span::after { transform: translateX(16px); }
