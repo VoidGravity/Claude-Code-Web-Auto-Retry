@@ -2,6 +2,15 @@
 
 All notable changes to Claude Code Web Auto-Retry will be documented here.
 
+## 1.0.2 - 2026-08-10
+
+### Fixed
+
+- Clear stale usage-limit detection after an automatic retry succeeds so the same tab can detect the next reset cycle without **Forget** + reload.
+- Treat a limit as active only when a visible **Try again** / **Retry** control is associated with a usage-limit card, instead of matching historical error text anywhere in the page.
+- Select the nearest valid upcoming reset time when old and new `Resets at ...` timestamps coexist in the Claude session DOM.
+- Start a fresh scheduler cycle when the reset timestamp changes instead of inheriting the previous cycle's alarm time or attempt count.
+
 ## 1.0.1 - 2026-08-10
 
 ### Fixed
