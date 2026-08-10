@@ -68,6 +68,49 @@
     return null;
   }
 
+  function findNearestResetTime(text, nowMs = Date.now()) {
+    const input = normalizeText(text);
+    if (!input) return null;
+
+    const patterns = [
+      /resets?\s+in\s+(?:(?:\d+)\s*(?:h|hr|hrs|hour|hours))?\s*(?:(?:\d+)\s*(?:m|min|mins|minute|minutes))?/gi,
+      /resets?(?:\s+at)?\s+\d{1,2}(?::\d{2})?\s*(?:AM|PM)\b/gi,
+      /resets?(?:\s+at)?\s+(?:[01]?\d|2[0-3]):[0-5]\d\b/gi
+    ];
+
+    const seen = new Set();
+    const candidates = [];
+
+    for (const pattern of patterns) {
+      for (const match of input.matchAll(pattern)) {
+        const candidateText = normalizeText(match[0]);
+        const key = `${match.index}:${candidateText.toLowerCase()}`;
+        if (!candidateText || seen.has(key)) continue;
+        seen.add(key);
+
+        const timestamp = parseResetTime(candidateText, nowMs);
+        if (!timestamp) continue;
+        candidates.push({
+          timestamp,
+          text: candidateText,
+          index: match.index || 0
+        });
+      }
+    }
+
+    if (!candidates.length) {
+      const timestamp = parseResetTime(input, nowMs);
+      return timestamp ? { timestamp, text: null, index: 0 } : null;
+    }
+
+    candidates.sort((a, b) => {
+      if (a.timestamp !== b.timestamp) return a.timestamp - b.timestamp;
+      return b.index - a.index;
+    });
+
+    return candidates[0];
+  }
+
   function formatTime(timestamp) {
     if (!timestamp) return 'Unknown';
     try {
@@ -87,6 +130,7 @@
     normalizeText,
     hasUsageLimitText,
     parseResetTime,
+    findNearestResetTime,
     formatTime
   });
 })(globalThis);
